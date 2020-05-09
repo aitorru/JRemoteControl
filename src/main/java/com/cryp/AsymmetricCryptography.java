@@ -45,14 +45,12 @@ public class AsymmetricCryptography {
 		return kf.generatePublic(spec);
 	}
 
-	public void encryptFile(byte[] input, File output, PrivateKey key)
-		throws IOException, GeneralSecurityException {
+	public void encryptFile(byte[] input, File output, PrivateKey key) throws IOException, GeneralSecurityException {
 		this.cipher.init(Cipher.ENCRYPT_MODE, key);
 		writeToFile(output, this.cipher.doFinal(input));
 	}
 
-	public void decryptFile(byte[] input, File output, PublicKey key)
-		throws IOException, GeneralSecurityException {
+	public void decryptFile(byte[] input, File output, PublicKey key) throws IOException, GeneralSecurityException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
 		writeToFile(output, this.cipher.doFinal(input));
 	}
@@ -65,17 +63,14 @@ public class AsymmetricCryptography {
 		fos.close();
 	}
 
-	public String encryptText(String msg, PrivateKey key)
-			throws NoSuchAlgorithmException, NoSuchPaddingException,
-			UnsupportedEncodingException, IllegalBlockSizeException,
-			BadPaddingException, InvalidKeyException {
+	public String encryptText(String msg, PrivateKey key) throws NoSuchAlgorithmException, NoSuchPaddingException,
+			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		this.cipher.init(Cipher.ENCRYPT_MODE, key);
 		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
 	}
 
 	public String decryptText(String msg, PublicKey key)
-			throws InvalidKeyException, UnsupportedEncodingException,
-			IllegalBlockSizeException, BadPaddingException {
+			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
@@ -88,23 +83,39 @@ public class AsymmetricCryptography {
 		return fbytes;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public void logicTest() throws Exception {
 		AsymmetricCryptography ac = new AsymmetricCryptography();
 		PrivateKey privateKey = ac.getPrivate("KeyPair/privateKey");
 		PublicKey publicKey = ac.getPublic("KeyPair/publicKey");
-
 		String msg = "Cryptography is fun!";
-		String encrypted_msg = ac.encryptText(msg, privateKey);
-		String decrypted_msg = ac.decryptText(encrypted_msg, publicKey);
+		String encrypted_msg = "";
+		String decrypted_msg = "";
+		try {
+			encrypted_msg = ac.encryptText(msg, privateKey);
+			decrypted_msg = ac.decryptText(encrypted_msg, publicKey);
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | UnsupportedEncodingException
+				| IllegalBlockSizeException | BadPaddingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		System.out.println("Original Message: " + msg +
 			"\nEncrypted Message: " + encrypted_msg
 			+ "\nDecrypted Message: " + decrypted_msg);
 
 		if (new File("KeyPair/text.txt").exists()) {
-			ac.encryptFile(ac.getFileInBytes(new File("KeyPair/text.txt")),
-				new File("KeyPair/text_encrypted.txt"),privateKey);
-			ac.decryptFile(ac.getFileInBytes(new File("KeyPair/text_encrypted.txt")),
+			try {
+				ac.encryptFile(ac.getFileInBytes(new File("KeyPair/text.txt")), new File("KeyPair/text_encrypted.txt"),
+						privateKey);
+						ac.decryptFile(ac.getFileInBytes(new File("KeyPair/text_encrypted.txt")),
 				new File("KeyPair/text_decrypted.txt"), publicKey);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} else {
 			System.out.println("Create a file text.txt under folder KeyPair");
 		}
