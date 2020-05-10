@@ -5,3 +5,6 @@ jar: pom.xml
 
 run:
 	cd target && java -jar *.jar && cd ..
+
+clean:
+	$(MVN) clean
