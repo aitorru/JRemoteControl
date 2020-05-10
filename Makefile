@@ -1,6 +1,6 @@
 MVN=mvn
 
-build: pom.xml
+jar: pom.xml
 	$(MVN) clean compile assembly:single
 
 run:

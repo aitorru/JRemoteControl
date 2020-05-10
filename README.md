@@ -13,7 +13,7 @@ Control other computers from one.
 ## How to build it
 > You need Maven to build this project
 ```bash
-make build
+make jar
 ```
 or
 ```bash
