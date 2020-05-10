@@ -1,7 +1,7 @@
 MVN=mvn
 
 build: pom.xml
-	$(MVN) package
+	$(MVN) clean compile assembly:single
 
 run:
 	cd target && java -jar *.jar && cd ..
