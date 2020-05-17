@@ -4,6 +4,7 @@
 Control other computers from one.
 
 ## WIP
+- [X] Updater
 - [ ] Cryptography
 - [ ] Command exec
 - [ ] File sending
