@@ -1,6 +1,7 @@
 package com.JRCon;
 
 import com.cryp.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +14,8 @@ import java.util.Scanner;
  */
 public class App {
     private static String OS = System.getProperty(("os.name").toLowerCase());
-    public static void main(String[] args) {
+
+    public static void checkUpdate() {
         File fileUpdater = new File("LatetsUpdate");
         if (!fileUpdater.exists()) {
             try {
@@ -32,21 +34,25 @@ public class App {
                 String ReadedTime = LatestUpdate.next();
                 long dayL = Long.valueOf(ReadedTime);
                 long resta = Instant.now().getEpochSecond() - dayL;
-                if(resta >= 604800){ // Una semana sin actualizar
-                    if(OS.indexOf("win") >= 0){
+                if (resta >= 604800) { // Una semana sin actualizar
+                    if (OS.indexOf("win") >= 0) {
                         Runtime.getRuntime().exec("Cpp_Updater\\updater.exe");
                         System.exit(0);
-                    } else if (OS.indexOf("nux") >= 0){
+                    } else if (OS.indexOf("nux") >= 0) {
                         Runtime.getRuntime().exec("Cpp_Updater/updater.out");
                         System.exit(0);
                     }
-                    
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        checkUpdate();
         GenerateKeys gk = new GenerateKeys();
         gk.checkLogic();
         Thread cl = new Thread(new CommandListener());
