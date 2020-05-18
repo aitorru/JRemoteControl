@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     // Latest jar download
     std::string downloadRoute = "https://github.com/aitorru/JRemoteControl/releases/latest/download/JRemoteControl.jar";
     CURL *curl_handle;
-    static const char *pagefilename = "../JRemoteControl.exe";
+    static const char *pagefilename = "../JRemoteControl.jar";
     FILE *pagefile;
 
     curl_global_init(CURL_GLOBAL_ALL);
