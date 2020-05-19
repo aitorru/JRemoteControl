@@ -41,6 +41,11 @@
     <artifactId>org.eclipse.jgit</artifactId>
     <version>3.5.0.201409260305-r</version>
   </dependency>
+  <dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf</artifactId>
+    <version>0.24</version>
+  </dependency>
   </dependencies>
 
   <build>
