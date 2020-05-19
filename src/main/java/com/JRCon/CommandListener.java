@@ -2,18 +2,11 @@ package com.JRCon;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import com.sun.net.httpserver.*;
 import com.cryp.AsymmetricCryptography;
@@ -41,6 +34,7 @@ public class CommandListener extends Thread implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         URI requestURI = exchange.getRequestURI();
         String query = requestURI.getQuery();
+        LOGGER.info(requestURI.getAuthority() + " Issued a command");
         String response = ejecutarComando(query);
         exchange.sendResponseHeaders(200, response.length());
         OutputStream os = exchange.getResponseBody();
@@ -54,9 +48,11 @@ public class CommandListener extends Thread implements HttpHandler {
             PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
             String cmd = as.decryptText(q, privateKey);
             Runtime.getRuntime().exec(cmd);
+            LOGGER.log(Level.INFO, "Ejecutando comando: " + cmd);
+            return cmd;
         }  catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.toString());
         }
         
         return "test";
