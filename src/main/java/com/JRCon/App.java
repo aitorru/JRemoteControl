@@ -2,15 +2,20 @@ package com.JRCon;
 
 import com.cryp.*;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Scanner;
 
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 
 /**
  * Hello world!
@@ -38,7 +43,7 @@ public class App {
                 String ReadedTime = LatestUpdate.next();
                 long dayL = Long.valueOf(ReadedTime);
                 long resta = Instant.now().getEpochSecond() - dayL;
-                if (resta >= 604800) { // Una semana sin actualizar
+                if (resta >= 604800) { // One week without updating
                     if (OS.indexOf("win") >= 0) {
                         Runtime.getRuntime().exec("Cpp_Updater\\updater.exe");
                         System.exit(0);
@@ -54,6 +59,42 @@ public class App {
             }
         }
     }
+    public static void sendREQ(){
+        AsymmetricCryptography as;
+        try {
+            as = new AsymmetricCryptography();               
+            Scanner consoleReader = new Scanner(System.in);
+            System.out.println("Enter IP:\r");
+            String IP = consoleReader.nextLine();
+            System.out.println("Enter PORT:\r");
+            String PORT = consoleReader.nextLine();
+            System.out.println("Enter command to be issued:\r");
+            String query = consoleReader.nextLine();
+            System.out.println("Enter patch to public key");
+            String rute = "";
+            File publicFile;
+            JFileChooser chooser = new JFileChooser();
+            int returnVal = chooser.showOpenDialog(null);
+            if(returnVal ==JFileChooser.APPROVE_OPTION){
+                publicFile = chooser.getSelectedFile();
+                rute = publicFile.getAbsolutePath();
+            }
+            PublicKey publickey = as.getPublic(rute);
+            String encripted = as.encryptText(query, publickey);
+            URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            int status = con.getResponseCode();
+            if(status==200){
+                System.out.println("Response code 200. Command file.");
+            }
+            con.disconnect();
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -65,17 +106,7 @@ public class App {
             cl.start();
         } else if (args[0].equals("admin")) {
             System.out.println("Running on admin");
-            AsymmetricCryptography as;
-            try {
-                as = new AsymmetricCryptography();
-                PublicKey publickey = as.getPublic("../KeyPair/publicKey");
-                System.out.println(as.encryptText("touch man", publickey));
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            //WIP
+            sendREQ();
         } else {
             System.out.println("Error: Worng prefix");
             System.out.println("Usage:\n\t0 args or admin");

