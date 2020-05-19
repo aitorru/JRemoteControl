@@ -3,14 +3,25 @@
 
 Control other computers from one.
 
+## Notes about the WIP
+
 ## WIP
 - [X] Updater
-- [ ] Cryptography
-- [ ] Command exec
+- [X] Cryptography
+- [X] Command exec
 - [ ] File sending
 - [ ] Created Server for communications
 - [ ] GUI for admin?
 - [ ] More to come...
+
+## Notes about the WIP
+
+The updater for now only have binaries for linux. Windows will come.
+
+The criptography is not using SSL but proper RSA.
+
+The command exec does not return any status.
+
 ## How to build it
 > You need Maven to build this project
 ```bash
