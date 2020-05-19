@@ -1,6 +1,7 @@
 package com.JRCon;
 
 import com.cryp.*;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import java.awt.Component;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.Scanner;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 
 /**
  * Hello world!
@@ -89,6 +91,7 @@ public class App {
                 System.out.println("Response code 200. Command file.");
             }
             con.disconnect();
+            consoleReader.close();
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -97,6 +100,11 @@ public class App {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception e) {
+            
+        }
         if (args.length == 0) {
             System.out.println("Running on slave");
             checkUpdate();
