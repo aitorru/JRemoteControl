@@ -4,9 +4,13 @@ import com.cryp.*;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import java.awt.Component;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -84,14 +88,19 @@ public class App {
             PublicKey publickey = as.getPublic(rute);
             String encripted = as.encryptText(query, publickey);
             URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
+            System.out.println(url);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
             if(status==200){
                 System.out.println("Response code 200. Command filed.");
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String tmpReader;
+                while ((tmpReader = bf.readLine()) != null){
+                    System.out.println(tmpReader);
+                }
+                bf.close();
             }
-            System.out.println(con.getResponseMessage());
-            con.disconnect();
             consoleReader.close();
 
         } catch (Exception e) {

