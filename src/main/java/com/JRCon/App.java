@@ -88,8 +88,9 @@ public class App {
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
             if(status==200){
-                System.out.println("Response code 200. Command file.");
+                System.out.println("Response code 200. Command filed.");
             }
+            System.out.println(con.getResponseMessage());
             con.disconnect();
             consoleReader.close();
 
