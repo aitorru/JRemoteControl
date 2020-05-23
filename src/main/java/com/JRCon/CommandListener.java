@@ -50,6 +50,7 @@ public class CommandListener extends Thread implements HttpHandler {
                 response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
             } else if(cmd.startsWith("shutdown")) {
                 response = "Goodbye";
+                running = false;
             } else {
                 response = executeCommand(query);
             }
