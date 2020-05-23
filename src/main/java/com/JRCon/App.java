@@ -3,23 +3,17 @@ package com.JRCon;
 import com.cryp.*;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Scanner;
 
-import javax.crypto.NoSuchPaddingException;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 

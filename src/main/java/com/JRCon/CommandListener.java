@@ -16,8 +16,9 @@ import com.logger.AdminLogger;
 
 public class CommandListener extends Thread implements HttpHandler {
     private static final Logger LOGGER = Logger.getLogger(CommandListener.class.getName());
-    private Logger log = new AdminLogger(LOGGER, "logs/servidor.log").getLOGGER();
+    private Logger log = new AdminLogger(LOGGER, "logs/server.log").getLOGGER();
     private static String OS = System.getProperty(("os.name").toLowerCase());
+    private boolean running = true;
 
     @Override
     public void run() {
@@ -47,6 +48,8 @@ public class CommandListener extends Thread implements HttpHandler {
                 response = executeModule(query);
             } else if (cmd.startsWith("tree")) {
                 response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
+            } else if(cmd.startsWith("shutdown")) {
+                response = "Goodbye";
             } else {
                 response = executeCommand(query);
             }
@@ -54,6 +57,10 @@ public class CommandListener extends Thread implements HttpHandler {
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
             os.close();
+            if(!running){
+                log.info("Shut down");
+                System.exit(0);
+            }
         } catch (Exception e) {
             // TODO: handle exception
         }
