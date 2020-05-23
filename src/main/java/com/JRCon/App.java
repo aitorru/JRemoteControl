@@ -88,7 +88,11 @@ public class App {
             PublicKey publickey = as.getPublic(rute);
             String encripted = as.encryptText(query, publickey);
             URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
-            System.out.println(url);
+            System.out.println("Request done. Sending...");
+            System.out.println("_______________________");
+            System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
+            System.out.println("_______________________");
+            Thread.sleep(10);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();

