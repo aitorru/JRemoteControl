@@ -14,6 +14,9 @@ import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Scanner;
 
+import java.awt.*;
+import java.awt.TrayIcon.MessageType;
+
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
@@ -59,10 +62,11 @@ public class App {
             }
         }
     }
-    public static void sendREQ(){
+
+    public static void sendREQ() {
         AsymmetricCryptography as;
         try {
-            as = new AsymmetricCryptography();               
+            as = new AsymmetricCryptography();
             Scanner consoleReader = new Scanner(System.in);
             System.out.println("Enter IP:\r");
             String IP = consoleReader.nextLine();
@@ -75,7 +79,7 @@ public class App {
             File publicFile;
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(null);
-            if(returnVal ==JFileChooser.APPROVE_OPTION){
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 publicFile = chooser.getSelectedFile();
                 rute = publicFile.getAbsolutePath();
             }
@@ -83,18 +87,18 @@ public class App {
             String encripted = as.encryptText(query, publickey);
             URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
             System.out.println("Request done. Sending...");
-            System.out.println("_______________________");
+            System.out.println("_______________________\n");
             System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
             System.out.println("_______________________");
             Thread.sleep(10);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
-            if(status==200){
+            if (status == 200) {
                 System.out.println("Response code 200. Command filed.");
                 BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String tmpReader;
-                while ((tmpReader = bf.readLine()) != null){
+                while ((tmpReader = bf.readLine()) != null) {
                     System.out.println(tmpReader);
                 }
                 bf.close();
@@ -102,7 +106,6 @@ public class App {
             consoleReader.close();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -111,9 +114,18 @@ public class App {
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
         } catch (Exception e) {
-            
+
         }
         if (args.length == 0) {
+            if (SystemTray.isSupported()) {
+                try {
+                    new App().runNotification("prueba");
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.err.println("System tray not supported!");
+            }
             System.out.println("Running on slave");
             checkUpdate();
             GenerateKeys gk = new GenerateKeys();
@@ -127,5 +139,16 @@ public class App {
             System.out.println("Error: Worng prefix");
             System.out.println("Usage:\n\t0 args or admin");
         }
+    }
+    public void runNotification(String text) throws AWTException {
+        SystemTray tray = SystemTray.getSystemTray();
+        Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("info.png"));
+        TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
+        //Let the system resize the image if needed
+        trayIcon.setImageAutoSize(true);
+        //Set tooltip text for the tray icon
+        trayIcon.setToolTip("System tray icon demo");
+        tray.add(trayIcon);
+        trayIcon.displayMessage("JRemoteControl", text, MessageType.INFO);
     }
 }
