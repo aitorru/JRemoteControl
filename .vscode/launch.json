@@ -1,0 +1,32 @@
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+    {
+        "type": "java",
+        "name": "CodeLens (Launch) - App",
+        "request": "launch",
+        "mainClass": "com.JRCon.App",
+        "projectName": "JRemoteControl"
+    },
+    {
+        "name": ".NET Core Launch (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/C#_Updator/bin/Debug/netcoreapp3.1/JUpdator.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/C#_Updator",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    },
+    {
+        "name": ".NET Core Attach",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "${command:pickProcess}"
+    }
+]
+}

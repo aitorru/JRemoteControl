@@ -3,19 +3,20 @@ package com.JRCon;
 import com.cryp.*;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import java.awt.Component;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Scanner;
 
-import javax.crypto.NoSuchPaddingException;
-import javax.swing.JComponent;
+import java.awt.*;
+import java.awt.TrayIcon.MessageType;
+
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
@@ -47,13 +48,16 @@ public class App {
                 long resta = Instant.now().getEpochSecond() - dayL;
                 if (resta >= 604800) { // One week without updating
                     if (OS.indexOf("win") >= 0) {
-                        Runtime.getRuntime().exec("Cpp_Updater\\updater.exe");
+                        Runtime.getRuntime().exec("Updator\\runner\\win-x64\\JUpdator.exe");
+                        File f = new File("LatetsUpdate");
+                        f.delete();
                         System.exit(0);
                     } else if (OS.indexOf("nux") >= 0) {
-                        Runtime.getRuntime().exec("Cpp_Updater/updater.out");
+                        Runtime.getRuntime().exec("Updator/runner/linux-x64/JUpdator");
+                        File f = new File("LatetsUpdate");
+                        f.delete();
                         System.exit(0);
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,10 +65,11 @@ public class App {
             }
         }
     }
-    public static void sendREQ(){
+
+    public static void sendREQ() {
         AsymmetricCryptography as;
         try {
-            as = new AsymmetricCryptography();               
+            as = new AsymmetricCryptography();
             Scanner consoleReader = new Scanner(System.in);
             System.out.println("Enter IP:\r");
             String IP = consoleReader.nextLine();
@@ -77,24 +82,33 @@ public class App {
             File publicFile;
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(null);
-            if(returnVal ==JFileChooser.APPROVE_OPTION){
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 publicFile = chooser.getSelectedFile();
                 rute = publicFile.getAbsolutePath();
             }
             PublicKey publickey = as.getPublic(rute);
             String encripted = as.encryptText(query, publickey);
             URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
+            System.out.println("Request done. Sending...");
+            System.out.println("_______________________\n");
+            System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
+            System.out.println("_______________________");
+            Thread.sleep(10);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
-            if(status==200){
-                System.out.println("Response code 200. Command file.");
+            if (status == 200) {
+                System.out.println("Response code 200. Command filed.");
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String tmpReader;
+                while ((tmpReader = bf.readLine()) != null) {
+                    System.out.println(tmpReader);
+                }
+                bf.close();
             }
-            con.disconnect();
             consoleReader.close();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -103,9 +117,18 @@ public class App {
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
         } catch (Exception e) {
-            
+
         }
         if (args.length == 0) {
+            if (SystemTray.isSupported()) {
+                try {
+                    new App().runNotification("Server is running!");
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.err.println("System tray not supported!");
+            }
             System.out.println("Running on slave");
             checkUpdate();
             GenerateKeys gk = new GenerateKeys();
@@ -119,5 +142,17 @@ public class App {
             System.out.println("Error: Worng prefix");
             System.out.println("Usage:\n\t0 args or admin");
         }
+    }
+    public void runNotification(String text) throws AWTException {
+        SystemTray tray = SystemTray.getSystemTray();
+        Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
+        //Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("icon.png"));
+        TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
+        //Let the system resize the image if needed
+        trayIcon.setImageAutoSize(true);
+        //Set tooltip text for the tray icon
+        trayIcon.setToolTip("System tray icon demo");
+        tray.add(trayIcon);
+        trayIcon.displayMessage("JRemoteControl", text, MessageType.INFO);
     }
 }
