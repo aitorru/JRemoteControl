@@ -44,22 +44,29 @@ public class App {
             try {
                 LatestUpdate = new Scanner(fileUpdater);
                 String ReadedTime = LatestUpdate.next();
+                LatestUpdate.close();
                 long dayL = Long.valueOf(ReadedTime);
                 long resta = Instant.now().getEpochSecond() - dayL;
                 if (resta >= 604800) { // One week without updating
-                    if (OS.indexOf("win") >= 0) {
-                        Runtime.getRuntime().exec("Updator\\runner\\win-x64\\JUpdator.exe");
-                        File f = new File("LatetsUpdate");
-                        f.delete();
+                    if (OS.indexOf("Win") >= 0) {
+                        new App().runNotification("1 week without updating. Updating...");
+                        System.out.println(fileUpdater.delete());
+                        String Updater = "Updator" + File.separator + "runner" + File.separator + "win-x64" + File.separator + "JUpdator.exe";
+                        ProcessBuilder pb = new ProcessBuilder(Updater);
+                        pb.start();
                         System.exit(0);
+
                     } else if (OS.indexOf("nux") >= 0) {
-                        Runtime.getRuntime().exec("Updator/runner/linux-x64/JUpdator");
+                        new App().runNotification("1 week without updating. Updating...");
                         File f = new File("LatetsUpdate");
                         f.delete();
+                        String Updater = "Updator" + File.separator + "runner" + File.separator + "linux-x64" + File.separator + "JUpdator";
+                        ProcessBuilder pb = new ProcessBuilder(Updater);
+                        pb.start();
                         System.exit(0);
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | AWTException e) {
                 e.printStackTrace();
                 System.exit(1);
             }

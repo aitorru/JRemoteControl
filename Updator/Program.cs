@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.IO;
+using System.Threading;
 
 namespace JUpdator
 {
@@ -8,6 +9,8 @@ namespace JUpdator
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Esperando a java a cerrar");
+            Thread.Sleep(10000);
             Console.WriteLine("Eliminando JAR anterior");
             String JAR = "../../../JRemoteControl.jar";
             try
