@@ -119,7 +119,7 @@ public class App {
         if (args.length == 0) {
             if (SystemTray.isSupported()) {
                 try {
-                    new App().runNotification("prueba");
+                    new App().runNotification("Server is running!");
                 } catch (AWTException e) {
                     e.printStackTrace();
                 }
@@ -143,7 +143,7 @@ public class App {
     public void runNotification(String text) throws AWTException {
         SystemTray tray = SystemTray.getSystemTray();
         Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
-        //Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("info.png"));
+        //Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("icon.png"));
         TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
         //Let the system resize the image if needed
         trayIcon.setImageAutoSize(true);
