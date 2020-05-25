@@ -48,10 +48,10 @@ public class App {
                 long resta = Instant.now().getEpochSecond() - dayL;
                 if (resta >= 604800) { // One week without updating
                     if (OS.indexOf("win") >= 0) {
-                        Runtime.getRuntime().exec("Updator\\runner\\JUpdater.exe");
+                        Runtime.getRuntime().exec("Updator\\runner\\win-x64\\JUpdator.exe");
                         System.exit(0);
                     } else if (OS.indexOf("nux") >= 0) {
-                        Runtime.getRuntime().exec("Updator/runner/JUpdater");
+                        Runtime.getRuntime().exec("Updator/runner/linux-x64/JUpdator");
                         System.exit(0);
                     }
 

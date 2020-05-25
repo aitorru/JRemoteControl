@@ -9,7 +9,7 @@ namespace JUpdator
         static void Main(string[] args)
         {
             Console.WriteLine("Eliminando JAR anterior");
-            String JAR = "../../JRemoteControl.jar";
+            String JAR = "../../../JRemoteControl.jar";
             try
             {
                 // Check if file exists
@@ -31,7 +31,7 @@ namespace JUpdator
             {
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile(downloadRoute, "../../JRemoteControl.jar");
+                    client.DownloadFile(downloadRoute, JAR);
                 }
             }
             catch (System.Exception)
