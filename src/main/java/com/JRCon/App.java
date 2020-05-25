@@ -49,12 +49,15 @@ public class App {
                 if (resta >= 604800) { // One week without updating
                     if (OS.indexOf("win") >= 0) {
                         Runtime.getRuntime().exec("Updator\\runner\\win-x64\\JUpdator.exe");
+                        File f = new File("LatetsUpdate");
+                        f.delete();
                         System.exit(0);
                     } else if (OS.indexOf("nux") >= 0) {
                         Runtime.getRuntime().exec("Updator/runner/linux-x64/JUpdator");
+                        File f = new File("LatetsUpdate");
+                        f.delete();
                         System.exit(0);
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
