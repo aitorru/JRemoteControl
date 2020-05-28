@@ -32,6 +32,8 @@ target/
 # Updator #
 Updator/bin/
 Updator/obj/
+ServerStarter/bin/
+ServerStarter/obj/
 C#_Updator
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

@@ -21,7 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
 /**
- * Hello world!
+ * Server Starter
  *
  */
 public class App {
@@ -48,25 +48,10 @@ public class App {
                 long dayL = Long.valueOf(ReadedTime);
                 long resta = Instant.now().getEpochSecond() - dayL;
                 if (resta >= 604800) { // One week without updating
-                    if (OS.indexOf("Win") >= 0) {
-                        new App().runNotification("1 week without updating. Updating...");
-                        System.out.println(fileUpdater.delete());
-                        String Updater = "Updator" + File.separator + "runner" + File.separator + "win-x64" + File.separator + "JUpdator.exe";
-                        ProcessBuilder pb = new ProcessBuilder(Updater);
-                        pb.start();
-                        System.exit(0);
-
-                    } else if (OS.indexOf("nux") >= 0) {
-                        new App().runNotification("1 week without updating. Updating...");
-                        File f = new File("LatetsUpdate");
-                        f.delete();
-                        String Updater = "Updator" + File.separator + "runner" + File.separator + "linux-x64" + File.separator + "JUpdator";
-                        ProcessBuilder pb = new ProcessBuilder(Updater);
-                        pb.start();
-                        System.exit(0);
-                    }
+                    File f = new File(".flag");
+                    f.createNewFile();
                 }
-            } catch (IOException | AWTException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
