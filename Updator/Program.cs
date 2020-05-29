@@ -11,7 +11,7 @@ namespace JUpdator
         {
             Console.WriteLine("Esperando a java a cerrar");
             Console.WriteLine("Eliminando JAR anterior");
-            String JAR = "../../../JRemoteControl.jar";
+            String JAR = "JRemoteControl.jar";
             try
             {
                 // Check if file exists

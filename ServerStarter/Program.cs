@@ -28,19 +28,29 @@ namespace ServerStarter
                         up.WaitForExit();
                         File.Delete(flagDir);
                     }
-                    catch ( Exception e)
+                    catch (Exception e)
                     {
                         Console.WriteLine(e.ToString());
                     }
-                    
+
                 }
-            } 
+            }
             else
             {
-                if (File.Exists(flag))
-                {
-                    
-                }
+                try
+                    {
+                        String r = Path.Combine(Environment.CurrentDirectory, "Updator");
+                        r = Path.Combine(r, "runner");
+                        r = Path.Combine(r, "linux-x64");
+                        r = Path.Combine(r, "JUpdator");
+                        Process up = Process.Start(r);
+                        up.WaitForExit();
+                        File.Delete(flagDir);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
             }
             try
             {
@@ -58,11 +68,12 @@ namespace ServerStarter
                 Console.WriteLine(JARDIR);
                 myProcess.Start();
                 myProcess.WaitForExit();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
-            
+
         }
     }
 }
