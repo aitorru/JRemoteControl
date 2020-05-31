@@ -1,7 +1,9 @@
 package com.JRCon;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -28,7 +30,7 @@ public class CommandListener extends Thread implements HttpHandler {
             server.createContext("/api", new CommandListener());
             server.setExecutor(null); // creates a default executor
             server.start();
-            log.info("Servidor encendido. Escuchando");
+            log.info("Server Online");
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString());
         }
@@ -48,7 +50,7 @@ public class CommandListener extends Thread implements HttpHandler {
                 response = executeModule(query);
             } else if (cmd.startsWith("tree")) {
                 response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
-            } else if(cmd.startsWith("shutdown")) {
+            } else if (cmd.startsWith("shutdown")) {
                 response = "Goodbye";
                 running = false;
             } else {
@@ -58,7 +60,7 @@ public class CommandListener extends Thread implements HttpHandler {
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
             os.close();
-            if(!running){
+            if (!running) {
                 log.info("Shut down");
                 System.exit(0);
             }
@@ -70,9 +72,28 @@ public class CommandListener extends Thread implements HttpHandler {
     public String executeCommand(String cmd) {
         try {
 
-            Runtime.getRuntime().exec(cmd);
-            LOGGER.log(Level.INFO, "Ejecutando comando: " + cmd);
-            return "Normal runner: Command ran successfully";
+            Process prss = Runtime.getRuntime().exec(cmd);
+            LOGGER.log(Level.INFO, "Running Command: " + cmd);
+            // Standar output
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(prss.getInputStream()));
+            // Error output
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(prss.getErrorStream()));
+
+            // Read the output from the command
+            String s = null;
+            String output = "Here is the standard output of the command:\n";
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+                output += s;
+            }
+            output += "Here is the standard error of the command (if any):\n";
+            // Read any errors from the attempted command
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+                output += s;
+            }
+
+            return output;
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.log(Level.SEVERE, e.toString());

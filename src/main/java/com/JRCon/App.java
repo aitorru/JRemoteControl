@@ -60,6 +60,7 @@ public class App {
 
     public static void sendREQ() {
         AsymmetricCryptography as;
+        boolean loop = true;
         try {
             as = new AsymmetricCryptography();
             Scanner consoleReader = new Scanner(System.in);
@@ -79,27 +80,39 @@ public class App {
                 rute = publicFile.getAbsolutePath();
             }
             PublicKey publickey = as.getPublic(rute);
-            String encripted = as.encryptText(query, publickey);
-            URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
-            System.out.println("Request done. Sending...");
-            System.out.println("_______________________\n");
-            System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
-            System.out.println("_______________________");
-            Thread.sleep(10);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            int status = con.getResponseCode();
-            if (status == 200) {
-                System.out.println("Response code 200. Command filed.");
-                BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String tmpReader;
-                while ((tmpReader = bf.readLine()) != null) {
-                    System.out.println(tmpReader);
+            while (loop) {
+                String encripted = as.encryptText(query, publickey);
+                URL url = new URL("http://" + IP + ":" + PORT + "/api?" + encripted);
+                System.out.println("Request done. Sending...");
+                System.out.println("_______________________\n");
+                System.out.println("http://" + IP + ":" + PORT + "/api?" + encripted);
+                System.out.println("_______________________");
+                Thread.sleep(10);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                int status = con.getResponseCode();
+                if (status == 200) {
+                    System.out.println("Response code 200. Command filed.");
+                    BufferedReader bf = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String tmpReader;
+                    while ((tmpReader = bf.readLine()) != null) {
+                        System.out.println(tmpReader);
+                    }
+                    bf.close();
                 }
-                bf.close();
+
+                System.out.print("Do you want to send more commands to the same host? Y/N: ");
+                String entry = consoleReader.nextLine();
+                if (entry.equals("Y") || entry.equals("y")) {
+                    System.out.println("Enter command to be issued:\r");
+                    query = consoleReader.nextLine();
+                } else if ((entry.equals("N") || entry.equals("n"))) {
+                    loop = false;
+                } else {
+                    System.out.println("Not understood. Exiting...");
+                }
             }
             consoleReader.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,14 +148,14 @@ public class App {
             System.out.println("Usage:\n\t0 args or admin");
         }
     }
+
     public void runNotification(String text) throws AWTException {
         SystemTray tray = SystemTray.getSystemTray();
         Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
-        //Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("icon.png"));
         TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
-        //Let the system resize the image if needed
+        // Let the system resize the image if needed
         trayIcon.setImageAutoSize(true);
-        //Set tooltip text for the tray icon
+        // Set tooltip text for the tray icon
         trayIcon.setToolTip("System tray icon demo");
         tray.add(trayIcon);
         trayIcon.displayMessage("JRemoteControl", text, MessageType.INFO);
