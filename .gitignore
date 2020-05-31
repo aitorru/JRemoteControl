@@ -2,7 +2,8 @@
 *.class
 
 # Log file
-*.log
+logs/*.log
+logs/*.log*
 
 # BlueJ files
 *.ctxt
@@ -40,4 +41,5 @@ C#_Updator
 hs_err_pid*
 
 # Launcher #
+ServerStarter.exe
 ServerStarter.out

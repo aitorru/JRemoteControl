@@ -8,34 +8,39 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class AdminLogger {
-    private  Logger LOGGER;
+    private Logger LOGGER;
     private FileHandler fileH;
-    //private static final Logger LOGGER = Logger.getLogger(App.class.getName());
+
+    // private static final Logger LOGGER = Logger.getLogger(App.class.getName());
     /**
      * <h1>Logger</h1>
-     * @param log Objeto log
+     * 
+     * @param log  Objeto log
      * @param path Ruta del archivo
      */
-    public AdminLogger(Logger log, String path){
+    public AdminLogger(Logger log, String path) {
         LOGGER = log;
         try {
             File dir = new File("logs");
-            if (!dir.isDirectory()){
+            if (!dir.isDirectory()) {
                 dir.mkdirs();
             }
-            fileH = new FileHandler("logs" + File.separator +  path);
+            fileH = new FileHandler("logs" + File.separator + path);
             fileH.setFormatter(new SimpleFormatter());
             fileH.setLevel(Level.ALL);
             LOGGER.addHandler(fileH);
         } catch (SecurityException | IOException e) {
+            e.printStackTrace();
         }
     }
+
     /**
-     * <h1>Get del log</h1> 
+     * <h1>Get del log</h1>
+     * 
      * @return Logger Objeto del get.
      */
-    public Logger getLOGGER(){
+    public Logger getLOGGER() {
         return LOGGER;
     }
-    
+
 }

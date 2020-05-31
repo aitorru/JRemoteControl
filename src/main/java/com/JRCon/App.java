@@ -16,7 +16,10 @@ import java.util.Scanner;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
@@ -26,6 +29,9 @@ import javax.swing.UIManager;
  */
 public class App {
     private static String OS = System.getProperty(("os.name").toLowerCase());
+    private static SystemTray tray = SystemTray.getSystemTray();
+    private static Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
+    private static TrayIcon trayIcon = new TrayIcon(image, "JRemoteControl");
 
     public static void checkUpdate() {
         File fileUpdater = new File("LatetsUpdate");
@@ -127,7 +133,7 @@ public class App {
         if (args.length == 0) {
             if (SystemTray.isSupported()) {
                 try {
-                    new App().runNotification("Server is running!");
+                    new App().firstRun("Server is running!");
                 } catch (AWTException e) {
                     e.printStackTrace();
                 }
@@ -149,15 +155,32 @@ public class App {
         }
     }
 
-    public void runNotification(String text) throws AWTException {
-        SystemTray tray = SystemTray.getSystemTray();
-        Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
-        TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
+    public void firstRun(String text) throws AWTException {
         // Let the system resize the image if needed
         trayIcon.setImageAutoSize(true);
         // Set tooltip text for the tray icon
-        trayIcon.setToolTip("System tray icon demo");
+        trayIcon.setToolTip("JRemoteControl");
+
+        MenuItem exitItem = new MenuItem("Exit");
+        final PopupMenu popup = new PopupMenu();
+        popup.add(exitItem);
+        trayIcon.setPopupMenu(popup);
+
         tray.add(trayIcon);
+
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                System.exit(0);
+            }
+        });
+
+        trayIcon.displayMessage("JRemoteControl", text, MessageType.INFO);
+
+    }
+
+    public void trayNotification(String text) {
         trayIcon.displayMessage("JRemoteControl", text, MessageType.INFO);
     }
 }

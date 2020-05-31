@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.sun.net.httpserver.*;
 import com.tree.FileAssert;
+import com.JRCon.App;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +33,7 @@ import com.logger.AdminLogger;
 
 public class CommandListener extends Thread implements HttpHandler {
     private static final Logger LOGGER = Logger.getLogger(CommandListener.class.getName());
-    private Logger log = new AdminLogger(LOGGER, "logs/server.log").getLOGGER();
+    private Logger log = new AdminLogger(LOGGER, "server.log").getLOGGER();
     private static String OS = System.getProperty(("os.name").toLowerCase());
     private boolean running = true;
 
@@ -46,7 +47,7 @@ public class CommandListener extends Thread implements HttpHandler {
             server.start();
             log.info("Server Online");
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.toString());
+            log.severe(e.toString());
         }
     }
 
@@ -55,7 +56,7 @@ public class CommandListener extends Thread implements HttpHandler {
         try {
             URI requestURI = exchange.getRequestURI();
             String query = requestURI.getQuery();
-            LOGGER.info(requestURI.getAuthority() + " Issued a command");
+            log.info(requestURI.getAuthority() + " Issued a command");
             String response = "";
             AsymmetricCryptography as = new AsymmetricCryptography();
             PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
@@ -76,10 +77,13 @@ public class CommandListener extends Thread implements HttpHandler {
             os.close();
             if (!running) {
                 log.info("Shut down");
+                new App().trayNotification("Shuting down");
+                Thread.sleep(50);
                 System.exit(0);
             }
         } catch (Exception e) {
             // TODO: handle exception
+            log.severe(e.toString());
         }
     }
 
@@ -87,7 +91,7 @@ public class CommandListener extends Thread implements HttpHandler {
         try {
             System.out.println("1");
             Process prss = Runtime.getRuntime().exec(cmd);
-            LOGGER.log(Level.INFO, "Running Command: " + cmd);
+            log.info("Running Command: " + cmd);
             // Standar output
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(prss.getInputStream()));
             // Error output
@@ -109,7 +113,7 @@ public class CommandListener extends Thread implements HttpHandler {
             return output;
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            LOGGER.log(Level.SEVERE, e.toString());
+            log.severe(e.toString());
         }
 
         return "Normal runner: Command failed";
@@ -128,7 +132,7 @@ public class CommandListener extends Thread implements HttpHandler {
             return "Module runner: Command ran successfully";
         } catch (Exception e) {
             // TODO: handle exception
-            LOGGER.log(Level.SEVERE, e.toString());
+            log.severe(e.toString());
         }
 
         return "Module runner: Command failed";
