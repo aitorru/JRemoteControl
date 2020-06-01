@@ -9,7 +9,9 @@ namespace ServerStarter
         static void Main(string[] args)
         {
             String flag = ".flag";
+            String lastUP = "LatestUpdate";
             String flagDir = Path.Combine(Environment.CurrentDirectory, flag);
+            String lastDir = Path.Combine(Environment.CurrentDirectory, lastUP);
             var os = Environment.OSVersion;
             Console.WriteLine("Platform: {0:G}", os.Platform);
             Process myProcess = new Process();
@@ -27,6 +29,7 @@ namespace ServerStarter
                         Process up = Process.Start(r);
                         up.WaitForExit();
                         File.Delete(flagDir);
+                        File.Delete(lastDir);
                     }
                     catch (Exception e)
                     {
@@ -48,6 +51,7 @@ namespace ServerStarter
                         Process up = Process.Start(r);
                         up.WaitForExit();
                         File.Delete(flagDir);
+                        File.Delete(lastDir);
                     }
                     catch (Exception e)
                     {

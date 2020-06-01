@@ -2,29 +2,18 @@ package com.JRCon;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
-import java.util.logging.Level;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
-
-import com.sun.net.httpserver.*;
-import com.tree.FileAssert;
-import com.JRCon.App;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.security.PrivateKey;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.sun.net.httpserver.*;
 import com.tree.FileAssert;
@@ -84,13 +73,40 @@ public class CommandListener extends Thread implements HttpHandler {
                     System.exit(0);
                 }
             } else if (exchange.getRequestMethod().equals("POST")) {
-                // WIP
-                System.out.println(query);
+                log.info(sa.toString() + " Uploaded a file");
+                InputStream is = exchange.getRequestBody();
+
+                AsymmetricCryptography as = new AsymmetricCryptography();
+                PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
+                String cmd = as.decryptText(query, privateKey);
+
+                File targetFile = new File(cmd);
+
+                OutputStream outStream = new FileOutputStream(targetFile);
+
+                byte[] buffer = new byte[8 * 1024];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    outStream.write(buffer, 0, bytesRead);
+                }
+                is.close();
+                outStream.close();
+
+                String response = "Done";
+                exchange.sendResponseHeaders(200, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
             }
 
         } catch (Exception e) {
             // TODO: handle exception
             log.severe(e.toString());
+            String response = "ERROR: " + e.toString();
+            exchange.sendResponseHeaders(500, response.length());
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
         }
     }
 

@@ -142,12 +142,13 @@ public class App {
                 rute = publicFile.getAbsolutePath();
             }
             PublicKey publickey = as.getPublic(rute);
-            consoleReader.close();
 
             String charset = "UTF-8";
             String param = "value";
             String CRLF = "\r\n";
+            String boundary = Long.toHexString(System.currentTimeMillis());
 
+            System.out.println("\nEnter patch to file to send");
             File FileToSend = null;
             chooser = null;
             chooser = new JFileChooser();
@@ -155,10 +156,13 @@ public class App {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 FileToSend = chooser.getSelectedFile();
             }
+            System.out.println("Enter the route to the file on server:\r");
+            String route = consoleReader.nextLine();
+            consoleReader.close();
 
-            String boundary = Long.toHexString(System.currentTimeMillis());
+            String routecry = as.encryptText(route, publickey);
 
-            String url = IP + ":" + PORT + "/api";
+            String url = "http://" + IP + ":" + PORT + "/api?" + routecry;
 
             URLConnection connection = new URL(url).openConnection();
             connection.setDoOutput(true);
@@ -166,20 +170,6 @@ public class App {
 
             try (OutputStream output = connection.getOutputStream();
                     PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);) {
-                // Send normal param.
-                writer.append("--" + boundary).append(CRLF);
-                writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
-                writer.append(CRLF).append(param).append(CRLF).flush();
-
-                // Send text file.
-                writer.append("--" + boundary).append(CRLF);
-                writer.append(
-                        "Content-Disposition: form-data; name=\"textFile\"; filename=\"" + FileToSend.getName() + "\"")
-                        .append(CRLF);
-                writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be
-                                                                                            // saved in this charset!
-                writer.append(CRLF).flush();
                 Files.copy(FileToSend.toPath(), output);
                 output.flush(); // Important before continuing with writer!
                 writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
@@ -187,16 +177,28 @@ public class App {
                 output.flush(); // Important before continuing with writer!
                 writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
 
-                // End of multipart/form-data.
-                writer.append("--" + boundary + "--").append(CRLF).flush();
             }
-
-            // Request is lazily fired whenever you need to obtain information about
-            // response.
             int responseCode = ((HttpURLConnection) connection).getResponseCode();
-            System.out.println(responseCode); // Should be 200
+            if (responseCode == 200) {
+                System.out.println("Response code 200. Upload done.");
+                BufferedReader bf = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String tmpReader;
+                while ((tmpReader = bf.readLine()) != null) {
+                    System.out.println(tmpReader);
+                }
+                bf.close();
+            } else {
+                System.out.println("Response code 500. Server error.");
+                BufferedReader bf = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String tmpReader;
+                while ((tmpReader = bf.readLine()) != null) {
+                    System.out.println(tmpReader);
+                }
+                bf.close();
+            }
         } catch (Exception e) {
             // TODO: handle exception
+            e.printStackTrace();
         }
 
     }
