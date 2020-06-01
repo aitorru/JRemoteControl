@@ -9,7 +9,7 @@ Control other computers from one.
 - [X] Updater
 - [X] Cryptography
 - [X] Command exec
-- [ ] File sending
+- [X] File sending
 - [ ] Created Server for communications
 - [ ] GUI for admin?
 - [ ] More to come...
@@ -23,21 +23,16 @@ The criptography is not using SSL but proper RSA.
 The command exec does not return any status.
 
 ## How to build it
-> You need Maven to build this project
+> You need Maven and dotnet to build this project
 ```bash
-make jar
+make all
+```
+## How to run it
+You need to run the ServerStarter to make sure the app is uploaded
+```bash
+./ServerStarter.out
 ```
 or
 ```bash
-mvn clean compile assembly:single
+ServerStarter.exe
 ```
-## How to run it
-> WIP: I might add a maven plugin to create de executable directly
-```bash
-make run
-```
-or you can just.
-```bash
-java -jar *.jar
-```
-You need to cd yourself into **/target**
