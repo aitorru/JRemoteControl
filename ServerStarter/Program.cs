@@ -37,7 +37,9 @@ namespace ServerStarter
             }
             else
             {
-                try
+                if (File.Exists(flagDir))
+                {
+                    try
                     {
                         String r = Path.Combine(Environment.CurrentDirectory, "Updator");
                         r = Path.Combine(r, "runner");
@@ -51,6 +53,9 @@ namespace ServerStarter
                     {
                         Console.WriteLine(e.ToString());
                     }
+
+                }
+
             }
             try
             {

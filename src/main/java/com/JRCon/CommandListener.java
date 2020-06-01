@@ -56,31 +56,38 @@ public class CommandListener extends Thread implements HttpHandler {
         try {
             URI requestURI = exchange.getRequestURI();
             String query = requestURI.getQuery();
-            log.info(requestURI.getAuthority() + " Issued a command");
-            String response = "";
-            AsymmetricCryptography as = new AsymmetricCryptography();
-            PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
-            String cmd = as.decryptText(query, privateKey);
-            if (cmd.startsWith("!")) {
-                response = executeModule(cmd);
-            } else if (cmd.startsWith("tree")) {
-                response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
-            } else if (cmd.startsWith("shutdown")) {
-                response = "Goodbye";
-                running = false;
-            } else {
-                response = executeCommand(cmd);
+            InetSocketAddress sa = exchange.getRemoteAddress();
+            if (exchange.getRequestMethod().equals("GET")) {
+                String response = "";
+                AsymmetricCryptography as = new AsymmetricCryptography();
+                PrivateKey privateKey = as.getPrivate("KeyPair/privateKey");
+                String cmd = as.decryptText(query, privateKey);
+                log.info(sa.toString() + " Issued a command: " + cmd);
+                if (cmd.startsWith("!")) {
+                    response = executeModule(cmd);
+                } else if (cmd.startsWith("tree")) {
+                    response = new FileAssert().printDirectoryTree(new File(cmd.split(" ")[1]));
+                } else if (cmd.startsWith("shutdown")) {
+                    response = "Goodbye";
+                    running = false;
+                } else {
+                    response = executeCommand(cmd);
+                }
+                exchange.sendResponseHeaders(200, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+                if (!running) {
+                    log.info("Shut down");
+                    new App().trayNotification("Shuting down");
+                    Thread.sleep(50);
+                    System.exit(0);
+                }
+            } else if (exchange.getRequestMethod().equals("POST")) {
+                // WIP
+                System.out.println(query);
             }
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-            if (!running) {
-                log.info("Shut down");
-                new App().trayNotification("Shuting down");
-                Thread.sleep(50);
-                System.exit(0);
-            }
+
         } catch (Exception e) {
             // TODO: handle exception
             log.severe(e.toString());

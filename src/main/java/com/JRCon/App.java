@@ -3,13 +3,22 @@ package com.JRCon;
 import com.cryp.*;
 import com.formdev.flatlaf.FlatLightLaf;
 
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.tools.ant.taskdefs.Delete;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.nio.file.Files;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Scanner;
@@ -22,6 +31,8 @@ import java.awt.event.ActionListener;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
+
+import java.net.*;
 
 /**
  * Server Starter
@@ -62,6 +73,132 @@ public class App {
                 System.exit(1);
             }
         }
+    }
+
+    public static void sendFile() {
+        /**
+         * String url = "http://example.com/upload"; String charset = "UTF-8"; String
+         * param = "value"; File textFile = new File("/path/to/file.txt"); File
+         * binaryFile = new File("/path/to/file.bin"); String boundary =
+         * Long.toHexString(System.currentTimeMillis()); // Just generate some unique
+         * random value. String CRLF = "\r\n"; // Line separator required by
+         * multipart/form-data.
+         * 
+         * URLConnection connection = new URL(url).openConnection();
+         * connection.setDoOutput(true); connection.setRequestProperty("Content-Type",
+         * "multipart/form-data; boundary=" + boundary);
+         * 
+         * try ( OutputStream output = connection.getOutputStream(); PrintWriter writer
+         * = new PrintWriter(new OutputStreamWriter(output, charset), true); ) { // Send
+         * normal param. writer.append("--" + boundary).append(CRLF);
+         * writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+         * writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
+         * writer.append(CRLF).append(param).append(CRLF).flush();
+         * 
+         * // Send text file. writer.append("--" + boundary).append(CRLF);
+         * writer.append("Content-Disposition: form-data; name=\"textFile\";
+         * filename=\"" + textFile.getName() + "\"").append(CRLF);
+         * writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
+         * // Text file itself must be saved in this charset!
+         * writer.append(CRLF).flush(); Files.copy(textFile.toPath(), output);
+         * output.flush(); // Important before continuing with writer!
+         * writer.append(CRLF).flush(); // CRLF is important! It indicates end of
+         * boundary.
+         * 
+         * // Send binary file. writer.append("--" + boundary).append(CRLF);
+         * writer.append("Content-Disposition: form-data; name=\"binaryFile\";
+         * filename=\"" + binaryFile.getName() + "\"").append(CRLF);
+         * writer.append("Content-Type: " +
+         * URLConnection.guessContentTypeFromName(binaryFile.getName())).append(CRLF);
+         * writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+         * writer.append(CRLF).flush(); Files.copy(binaryFile.toPath(), output);
+         * output.flush(); // Important before continuing with writer!
+         * writer.append(CRLF).flush(); // CRLF is important! It indicates end of
+         * boundary.
+         * 
+         * // End of multipart/form-data. writer.append("--" + boundary +
+         * "--").append(CRLF).flush(); }
+         * 
+         * // Request is lazily fired whenever you need to obtain information about
+         * response. int responseCode = ((HttpURLConnection)
+         * connection).getResponseCode(); System.out.println(responseCode); // Should be
+         * 200
+         */
+        AsymmetricCryptography as;
+        try {
+            as = new AsymmetricCryptography();
+            Scanner consoleReader = new Scanner(System.in);
+            System.out.println("Enter IP:\r");
+            String IP = consoleReader.nextLine();
+            System.out.println("Enter PORT:\r");
+            String PORT = consoleReader.nextLine();
+            System.out.println("Enter patch to public key");
+            String rute = "";
+            File publicFile;
+            JFileChooser chooser = new JFileChooser();
+            int returnVal = chooser.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                publicFile = chooser.getSelectedFile();
+                rute = publicFile.getAbsolutePath();
+            }
+            PublicKey publickey = as.getPublic(rute);
+            consoleReader.close();
+
+            String charset = "UTF-8";
+            String param = "value";
+            String CRLF = "\r\n";
+
+            File FileToSend = null;
+            chooser = null;
+            chooser = new JFileChooser();
+            returnVal = chooser.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                FileToSend = chooser.getSelectedFile();
+            }
+
+            String boundary = Long.toHexString(System.currentTimeMillis());
+
+            String url = IP + ":" + PORT + "/api";
+
+            URLConnection connection = new URL(url).openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+            try (OutputStream output = connection.getOutputStream();
+                    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);) {
+                // Send normal param.
+                writer.append("--" + boundary).append(CRLF);
+                writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+                writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
+                writer.append(CRLF).append(param).append(CRLF).flush();
+
+                // Send text file.
+                writer.append("--" + boundary).append(CRLF);
+                writer.append(
+                        "Content-Disposition: form-data; name=\"textFile\"; filename=\"" + FileToSend.getName() + "\"")
+                        .append(CRLF);
+                writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be
+                                                                                            // saved in this charset!
+                writer.append(CRLF).flush();
+                Files.copy(FileToSend.toPath(), output);
+                output.flush(); // Important before continuing with writer!
+                writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
+
+                output.flush(); // Important before continuing with writer!
+                writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
+
+                // End of multipart/form-data.
+                writer.append("--" + boundary + "--").append(CRLF).flush();
+            }
+
+            // Request is lazily fired whenever you need to obtain information about
+            // response.
+            int responseCode = ((HttpURLConnection) connection).getResponseCode();
+            System.out.println(responseCode); // Should be 200
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
     }
 
     public static void sendREQ() {
@@ -149,6 +286,9 @@ public class App {
         } else if (args[0].equals("admin")) {
             System.out.println("Running on admin");
             sendREQ();
+        } else if (args[0].equals("file")) {
+            System.out.println("Sending file");
+            sendFile();
         } else {
             System.out.println("Error: Worng prefix");
             System.out.println("Usage:\n\t0 args or admin");
