@@ -43,3 +43,7 @@ hs_err_pid*
 # Launcher #
 ServerStarter.exe
 ServerStarter.out
+ServerStarter/runner/linux-x64/ServerStarter.pdb
+Updator/runner/linux-x64/JUpdator
+.settings/org.eclipse.core.resources.prefs
+.flag
