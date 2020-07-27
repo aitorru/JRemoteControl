@@ -29,7 +29,9 @@ namespace ServerStarter
                         Process up = Process.Start(r);
                         up.WaitForExit();
                         File.Delete(flagDir);
+                        Console.WriteLine("Deleting flag");
                         File.Delete(lastDir);
+                        Console.WriteLine("Deleting last update date");
                     }
                     catch (Exception e)
                     {
@@ -51,7 +53,9 @@ namespace ServerStarter
                         Process up = Process.Start(r);
                         up.WaitForExit();
                         File.Delete(flagDir);
+                        Console.WriteLine("Deleting flag");
                         File.Delete(lastDir);
+                        Console.WriteLine("Deleting last update date");
                     }
                     catch (Exception e)
                     {

@@ -3,10 +3,6 @@ package com.JRCon;
 import com.cryp.*;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.tools.ant.taskdefs.Delete;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.security.PublicKey;
 import java.time.Instant;
@@ -27,8 +22,6 @@ import java.awt.*;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
@@ -45,7 +38,7 @@ public class App {
     private static TrayIcon trayIcon = new TrayIcon(image, "JRemoteControl");
 
     public static void checkUpdate() {
-        File fileUpdater = new File("LatetsUpdate");
+        File fileUpdater = new File("LatestUpdate");
         if (!fileUpdater.exists()) {
             try {
                 FileWriter DateWriter = new FileWriter(fileUpdater);
