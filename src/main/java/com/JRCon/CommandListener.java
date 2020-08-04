@@ -109,7 +109,6 @@ public class CommandListener extends Thread implements HttpHandler {
 
     public String executeCommand(String cmd) {
         try {
-            System.out.println("1");
             Process prss = Runtime.getRuntime().exec(cmd);
             log.info("Running Command: " + cmd);
             // Standar output
@@ -140,7 +139,7 @@ public class CommandListener extends Thread implements HttpHandler {
     }
 
     public String executeModule(String q) {
-        String rute = "Modules" + System.lineSeparator() + q;
+        String rute = "Modules" + File.separator + q;
         try {
             if (OS.indexOf("win") >= 0) {
                 rute = rute + ".exe";
@@ -152,7 +151,7 @@ public class CommandListener extends Thread implements HttpHandler {
             return "Module runner: Command ran successfully";
         } catch (Exception e) {
             // TODO: handle exception
-            log.severe(e.toString());
+            log.severe(e.toString() + " RUTA: " + rute);
         }
 
         return "Module runner: Command failed";
